@@ -4,7 +4,7 @@
 using namespace std;
 
 void mostrarVector(vector<int>&);
-vector<int> PD(int, int, vector<int>&, int);
+vector<int> PD(int, int, vector<int>&, vector<int>&, int);
 
 int main(){
 	int cantCases = 0;
@@ -23,7 +23,7 @@ int main(){
 			cin >> aux;
 		}
 
-		res = PD(ferryLarge, ferryLarge, cars, 0);
+		res = PD(ferryLarge, ferryLarge, cars, res, 0);
 		cout << endl;
 		cantCases --;
 	}
@@ -37,10 +37,9 @@ int main(){
 
 
 
-vector<int> PD(int ferryD, int ferryI, vector<int>& cars, int i){
-	vector<int> res;
+vector<int> PD(int ferryD, int ferryI, vector<int>& cars, vector<int>& res, int i){
 	if(cars[i] > ferryD && cars[i] > ferryI){
-		return 0;
+		return res;
 	}
 
 	
