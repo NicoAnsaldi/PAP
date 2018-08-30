@@ -5,9 +5,8 @@
 using namespace std;
 
 void mostrarVector(vector<int>&);
-void PD(int, vector<int>&, vector<int>&);
-int kp(int, int, vector<int>&, vector<int>&, vector< vector<int> >&);
-int sumaLosQueQuedan(vector<int>, vector<int>&, int);
+int PD(int i, int pI, int pD, vector<int>& cars, vector<int>& res, vector< vector<int> >& matriz);
+void mostrarMatriz(vector< vector<int> >&, int, int);
 
 int main(){
 	int cantCases = 0;
@@ -16,10 +15,11 @@ int main(){
 	
 	while(cantCases > 0){
 		cin >> ferryLarge;
-		ferryLarge = ferryLarge * 100;
+		ferryLarge = ferryLarge*100;
+		
 		vector<int> cars;
-		vector<int> res;
-		int aux = 1;
+
+		int aux = 0;
 		cin >> aux;
 		
 		while(aux > 0){
@@ -27,20 +27,31 @@ int main(){
 			cin >> aux;
 		}
 
-		PD(ferryLarge, cars, res);
+		vector<int> res(cars.size(),-1);
+		vector< vector<int> > matriz(cars.size(), vector<int>(ferryLarge+1,-1));
 
-		cout << cars.size() << endl;
+		PD(0, ferryLarge, ferryLarge, cars, res, matriz);
+		
+		//mostrarMatriz(matriz, cars.size(), ferryLarge+1);
+
 		int i = 0;
-		while(i < cars.size()){
-			if(i == res[0]){
-				cout << "port" << endl;
-				res.erase(res.begin());
-			}else{
-				cout << "starboard" << endl;
+		int acum = 0;
+		while(i < res.size()){
+			if(res[i] != -1){
+				acum++;
 			}
 			i++;
 		}
 
+		cout << acum << endl;
+
+		i=0;
+		while(i < res.size()){
+			if(res[i] == 1) cout << "port" << endl;
+			if(res[i] == 0) cout << "starboard" << endl;
+			i++;
+		}
+		
 		cout << endl;
 		cantCases --;
 	}
@@ -50,42 +61,49 @@ int main(){
 
 
 
-void PD(int ferry, vector<int>& cars, vector<int>& res){
-	vector<int> loadCars;	
-	while(cars.size() > 0){
-		vector< vector<int> > matriz (cars.size(),vector<int>(ferry,-1));
-		kp(cars.size()-1, ferry, cars, loadCars, matriz);
-		if(sumaLosQueQuedan(loadCars, cars, ferry) <= ferry){
-			break;
-		}else{
-			loadCars.clear();
-			cars.pop_back();
-		}
-	}
+int PD(int i, int pI, int pD, vector<int>& cars, vector<int>& res, vector< vector<int> >& matriz){
 
-	int i = 0;
-	while(i < loadCars.size()){
-		res.push_back(loadCars[i]);
-		i++;
-	}
-}
+	int a = 0;
+	int b = 0;
 
-
-int kp(int i, int ferryL, vector<int>& cars, vector<int>& loadCars, vector< vector<int> >& matriz){
-
-	if(i <= 0){
+	if(i >= cars.size()){
 		return 0;
 	}
-	
-	if(cars[i] > ferryL){
-		kp(i-1, ferryL, cars, loadCars, matriz);
+
+	if(matriz[i][pI] != -1){
+		return matriz[i][pI];
+	}
+
+	if(matriz[i][pD] != -1){
+		return matriz[i][pI];
+	}
+
+	if(cars[i] <= pI){
+		int aux = i;
+		a = PD(aux+1, pI-cars[i], pD, cars, res, matriz)+1;
+	}
+
+	if(cars[i] <= pD){
+		int aux = i;
+		b = PD(aux+1, pI, pD-cars[i], cars, res, matriz)+1;
+	}
+
+	if(a == 0 && b == 0){
+		return 0;
 	}else{
-		int a = kp(i-1, ferryL, cars, loadCars, matriz);
-		int b = kp(i-1, (ferryL-cars[i]), cars, loadCars, matriz)+1;
-		if(b>=a){
-			loadCars.push_back(i);
+		if(a>=b){
+			if(a > matriz[i][pI-cars[i]]){
+				matriz[i][pI-cars[i]] = a;
+				res[i] = 1;
+			}
+			return matriz[i][pI-cars[i]];
+		}else{
+			if(b > matriz[i][pD-cars[i]]){	
+				matriz[i][pD-cars[i]] = b;
+				res[i] = 0;
+			}
+			return matriz[i][pD-cars[i]];
 		}
-		return max(a,b);
 	}
 
 	return -1;
@@ -99,18 +117,19 @@ void mostrarVector(vector<int>& x){
 	}
 }
 
-int sumaLosQueQuedan(vector<int> loadCars, vector<int>& cars, int ferry){
+void mostrarMatriz(vector< vector<int> >& matriz, int cars, int ferry){
 	int i = 0;
-	int suma=0;
+	int j = 0;
 
-	while(i < cars.size()){
-		if(i == loadCars[0]){
-			loadCars.erase(loadCars.begin());
-		}else{
-			suma = suma + cars[i];
+	while(i < cars){
+		j = 0;
+		while(j < ferry){
+			cout << matriz[i][j]<< "  ";
+			j++;
 		}
+		cout << endl<<endl;
 		i++;
 	}
-	return suma;
+
 }
 
