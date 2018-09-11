@@ -4,7 +4,7 @@
 using namespace std;
 
 void mostrarMatriz(vector< vector<int> >& tratadosComerciales, int cantCiudades);
-int PD(vector<int> ciudadesAConectar, vector< vector<int> >& tratadosComerciales);
+int PD(int cantCiudadesRecorridas, int ciudadActual, int posibleADerecha, int posibleAIzquierda, vector<int>* recorrido, vector< vector<int> >& tratadosComerciales, int cantCiudades);
 
 
 int main(){
@@ -28,38 +28,31 @@ int main(){
 
 	//Matriz cxc.
 	//mostrarMatriz(tratadosComerciales, cantCiudades);
-	vector<int> ciudadesAConectar;
+	vector<int> recorrido(n+1, 0);
 	for(int i = 1; i <= cantCiudades; i++){
-		ciudadesAConectar.push_back(i);
-	}
-
-	PD(ciudadesAConectar, tratadosComerciales);
-
-
-
-	return 0;
-}
-
-int PD(vector<int> ciudadesAConectar, vector< vector<int> >& tratadosComerciales){
-	int ciudadAUnir = ciudadesAConectar[0];
-	for(int i = 0; i < ciudadesAConectar.size(); i++){
-		if(tratadosComerciales[ciudadAUnir-1][ciudadesAConectar[i]-1] == 1){
-			vector<int> ciudadADerecha;
-			vector<int> ciudadAIzquierda;
-
-			for(int j = ; j < )
+		int res = PD(0, i, i, i, &recorrido, tratadosComerciales, cantCiudades);
+		if(res == cantCiudades){
+			break;
 		}
 	}
 
+	return 0;
+}
 
+int PD(int cantCiudadesRecorridas, int ciudadActual, int posibleADerecha, int posibleAIzquierda, vector<int>* recorrido, vector< vector<int> >& tratadosComerciales, int cantCiudades){
+	if(cantCiudadesRecorridas > cantCiudades){
+		return 0;
+	}
+
+	if(tratadosComerciales[ciudadActual-1][posibleAIzquierda-1] == 0 && tratadosComerciales[ciudadActual-1][posibleADerecha-1] == 0){
+		return 0;
+	}
+
+	int a = PD(cantCiudadesRecorridas++, )
 
 
 	return 0;
 }
-
-
-
-
 
 
 void mostrarMatriz(vector< vector<int> >& matriz, int x){
