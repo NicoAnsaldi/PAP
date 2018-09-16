@@ -6,8 +6,9 @@ using namespace std;
 int cantCiudades = 0;
 
 void mostrarMatriz(vector< vector<int> >& tratadosComerciales);
-int PD(int cantCiudadesRecorridas, int ciudadActual, int posibleAIzquierda, int posibleADerecha, vector<int>& recorrido, vector< vector<int> >& tratadosComerciales);
+int PD(int cantCiudadesRecorridas, int ciudadActual, int posibleAIzquierda, int posibleADerecha, vector< vector<int> >& matrizRecorrido, vector< vector<int> >& tratadosComerciales);
 int listaCircular(int ciudad);
+void reconstruirCamino(vector< vector<int> >& matrizRecorrido, int i, int izquierda, int derecha);
 
 int main(){
 	int cantTratados;
@@ -29,23 +30,21 @@ int main(){
 
 	//Matriz cxc.
 	//mostrarMatriz(tratadosComerciales);
-	vector<int> recorrido(cantCiudades, 0);
+	vector< vector<int> > matrizRecorrido(cantCiudades, vector<int>(cantCiudades,0));
 	for(int i = 1; i <= cantCiudades; i++){
-		int res = PD(1, i, listaCircular(i--), listaCircular(i++), recorrido, tratadosComerciales);
+		int auxIzquierda = listaCircular(i-1);
+		int auxDerecha = listaCircular(i+1);
+		int res = PD(1, i, auxIzquierda, auxDerecha, matrizRecorrido, tratadosComerciales);
 		if(res == cantCiudades){
+			reconstruirCamino(matrizRecorrido, i, listaCircular(i-1), listaCircular(i+1));
 			break;
 		}
-		recorrido = vector<int>(cantCiudades, 0);
-	}
-
-	for(int i = 0; i < recorrido.size(); i++){
-		cout << recorrido[i] << endl;
 	}
 
 	return 0;
 }
 
-int PD(int cantCiudadesRecorridas, int ciudadActual, int posibleAIzquierda, int posibleADerecha, vector<int>& recorrido, vector< vector<int> >& tratadosComerciales){
+int PD(int cantCiudadesRecorridas, int ciudadActual, int posibleAIzquierda, int posibleADerecha, vector< vector<int> >& matrizRecorrido, vector< vector<int> >& tratadosComerciales){
 	int izquierda = -1;
 	int derecha = -1;
 
@@ -54,11 +53,11 @@ int PD(int cantCiudadesRecorridas, int ciudadActual, int posibleAIzquierda, int 
 	}
 
 	if(tratadosComerciales[ciudadActual-1][posibleAIzquierda-1] == 1){
-		izquierda = PD(cantCiudadesRecorridas++, posibleAIzquierda, listaCircular(posibleAIzquierda--), posibleADerecha, recorrido, tratadosComerciales);
+		izquierda = PD(cantCiudadesRecorridas+1, posibleAIzquierda, listaCircular(posibleAIzquierda-1), posibleADerecha, matrizRecorrido, tratadosComerciales)+1;
 	}
 
 	if(tratadosComerciales[ciudadActual-1][posibleADerecha-1] == 1){
-		derecha = PD(cantCiudadesRecorridas++, posibleADerecha, posibleAIzquierda, listaCircular(posibleADerecha++), recorrido, tratadosComerciales);
+		derecha = PD(cantCiudadesRecorridas+1, posibleADerecha, posibleAIzquierda, listaCircular(posibleADerecha+1), matrizRecorrido, tratadosComerciales)+1;
 	}
 
 	if(izquierda == -1 && derecha == -1){
@@ -66,13 +65,31 @@ int PD(int cantCiudadesRecorridas, int ciudadActual, int posibleAIzquierda, int 
 	}
 
 	if(izquierda >= derecha){
-		recorrido[ciudadActual-1] = posibleAIzquierda;
+		if(izquierda > matrizRecorrido[ciudadActual-1][posibleAIzquierda-1]){
+			matrizRecorrido[ciudadActual-1][posibleAIzquierda-1] = izquierda;
+		}
 		return izquierda;
 	}else{
-		recorrido[ciudadActual-1] = posibleADerecha;
+		if(derecha > matrizRecorrido[ciudadActual-1][posibleADerecha-1]){
+			matrizRecorrido[ciudadActual-1][posibleADerecha-1] = derecha;
+		}
 		return derecha;
 	}
 	return 0;
+}
+
+void reconstruirCamino(vector< vector<int> >& matrizRecorrido, int i, int izquierda, int derecha){
+	
+	for(int j = 0; j < cantCiudades; j++){
+		cout << i << endl;
+		if(matrizRecorrido[i-1][izquierda-1] > matrizRecorrido[i-1][derecha-1]){
+			i = izquierda;
+			izquierda = listaCircular(i-1);
+		}else{
+			i = derecha;
+			derecha = listaCircular(i+1);
+		}
+	}
 }
 
 
