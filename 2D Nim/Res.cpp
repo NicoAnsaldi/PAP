@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <utility>
 
 using namespace std;
 
@@ -7,7 +8,7 @@ int width = 0;
 int height = 0;
 int pieces = 0;
 
-void mostrarMatriz(vector< vector<int> >& matriz);
+void mostrarMatriz(vector< vector< pair<int,int> > >& matriz);
 void DFS(vector< vector<int> >& gird, vector< vector<int> >& matrizColoreo);
 
 int main(){
@@ -19,39 +20,34 @@ int main(){
 		cin >> height;
 		cin >> pieces;
 
-		vector< vector<int> > grid1(width, vector<int>(height,0));
+		vector< vector< pair<int,int> > > grid1(width, vector< pair<int,int> >(height,pair<int,int>(0,-1)));
 		for(int j = 0; j < pieces; j++){
 			int x = 0;
 			int y = 0;
 			cin >> x >> y;
-			grid1[x][y] = 1;
+			grid1[x][y].first = 1;
 		}
 
-		// mostrarMatriz(grid1);
-		vector< vector<int> > grid2(width, vector<int>(height,0));
+		 mostrarMatriz(grid1);
+		vector< vector< pair<int,int> > > grid2 (width, vector< pair<int,int> >(height,pair<int,int>(0,-1)));
 		for(int j = 0; j < pieces; j++){
 			int x = 0;
 			int y = 0;
 			cin >> x >> y;
-			grid2[x][y] = 1;
+			grid2[x][y].first = 1;
 		}
-		//mostrarMatriz(grid2);
-
-		vector< vector<int> > matrizColoreo(width, vector<int>(height,-1));
-		
-		
-
+		mostrarMatriz(grid2);
 	}
 
 	return 0;
 }
 
 
-void mostrarMatriz(vector< vector<int> >& matriz){
+void mostrarMatriz(vector< vector< pair<int,int> > >& matriz){
 
 	for(int i = 0; i < width; i++){
 		for(int j = 0; j < height; j++){
-			cout << matriz[i][j] << " ";
+			cout << "("<< matriz[i][j].first << ", " << matriz[i][j].second << ") ";
 		}
 		cout << endl;
 	}
